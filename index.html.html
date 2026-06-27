@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>ACI 211 Concrete Mix Design</title>
+    
+    <!-- PWA / iOS Web App -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Mix Design">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><rect width='180' height='180' rx='36' fill='%23f4a340'/><text x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-size='80' fill='%231a1a1a'>🏗️</text></svg>">
+    <meta name="theme-color" content="#0f1923">
+    
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22ACI%20211%20Mix%20Design%22%2C%22short_name%22%3A%22Mix%20Design%22%2C%22start_url%22%3A%22.%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230f1923%22%2C%22theme_color%22%3A%22%230f1923%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'192'%20height%3D'192'%3E%253Crect%20width%3D'192'%20height%3D'192'%20rx%3D'38'%20fill%3D'%23f4a340'%2F%3E%253Ctext%20x%3D'50%25'%20y%3D'50%25'%20dominant-baseline%3D'central'%20text-anchor%3D'middle'%20font-size%3D'90'%20fill%3D'%231a1a1a'%3E%F0%9F%8F%97%EF%B8%8F%3C%2Ftext%3E%3C%2Fsvg%3E%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
+    
+    <style>
+        :root {
+            --bg: #0f1923;
+            --panel: #182230;
+            --border: #263345;
+            --accent: #f4a340;
+            --accent2: #3b9eff;
+            --text: #e0e6ed;
+            --text2: #a0b4c8;
+            --danger: #e05555;
+            --success: #4caf84;
+            --warning: #e8a840;
+            --input-bg: #1a2735;
+            --tab-active: #1e3144;
+            --card: #1c2a3a;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.5;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        /* Sidebar – desktop */
+        .sidebar {
+            width: 260px;
+            background: var(--panel);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+        .sidebar-header {
+            padding: 20px 18px;
+            border-bottom: 1px solid var(--border);
+            text-align: center;
+        }
+        .sidebar-header .logo {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: -0.3px;
+        }
+        .sidebar-header .subtitle {
+            font-size: 0.72em;
+            color: var(--text2);
+            margin-top: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .sidebar-nav { flex:1; padding:10px 0; }
+        .sidebar-nav .nav-section {
+            padding: 8px 18px 4px;
+            font-size: 0.68em;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--text2);
+            font-weight: 600;
+        }
+        .sidebar-nav button {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 11px 18px;
+            border: none;
+            background: transparent;
+            color: var(--text2);
+            cursor: pointer;
+            font-size: 0.88em;
+            text-align: left;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+            font-family: inherit;
+            letter-spacing: 0.2px;
+        }
+        .sidebar-nav button:hover,
+        .sidebar-nav button.active {
+            background: var(--tab-active);
+            color: #fff;
+            border-left-color: var(--accent);
+            font-weight: 600;
+        }
+        .sidebar-nav button .nav-icon { font-size:1.2em; width:22px; text-align:center; }
+        .sidebar-footer {
+            padding: 14px 18px;
+            border-top: 1px solid var(--border);
+            font-size: 0.7em;
+            color: var(--text2);
+            text-align: center;
+        }
+        /* Main */
+        .main-content {
+            flex:1;
+            display:flex;
+            flex-direction:column;
+            overflow-y:auto;
+            max-height:100vh;
+        }
+        .top-bar {
+            background: var(--panel);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+            position: sticky;
+            top:0;
+            z-index:5;
+        }
+        .top-bar h1 { font-size:1.1em; font-weight:600; }
+        .badge {
+            background:#1a3a2a;
+            color: var(--success);
+            padding:5px 12px;
+            border-radius:20px;
+            font-size:0.7em;
+            font-weight:600;
+            letter-spacing:0.5px;
+            border:1px solid #25553a;
+        }
+        .content-area { padding:24px; flex:1; overflow-y:auto; }
+        .sheet-panel { display:none; }
+        .sheet-panel.active { display:block; }
+        /* Cards */
+        .card {
+            background: var(--card);
+            border:1px solid var(--border);
+            border-radius:10px;
+            padding:20px 22px;
+            margin-bottom:18px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+        }
+        .card h3 { font-size:0.95em; font-weight:600; margin-bottom:14px; color:#fff; letter-spacing:-0.2px; display:flex; align-items:center; gap:8px; }
+        .card h3 .dot { width:8px; height:8px; border-radius:50%; background:var(--accent); display:inline-block; }
+        .card h4 { font-size:0.8em; color:var(--text2); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.8px; }
+        /* Grids */
+        .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+        .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+        .grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+        @media (max-width:768px) {
+            .grid-2, .grid-3, .grid-4 { grid-template-columns:1fr; }
+            .app-container { flex-direction: column; }
+            .sidebar {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                width: 100%;
+                height: auto;
+                flex-direction: row;
+                overflow-x: auto;
+                border-right: none;
+                border-top: 1px solid var(--border);
+                z-index: 200;
+                transform: translateY(0);
+                padding: 0 8px;
+                background: var(--panel);
+            }
+            .sidebar-header, .sidebar-footer, .nav-section { display: none; }
+            .sidebar-nav {
+                display: flex;
+                flex-direction: row;
+                gap: 2px;
+                padding: 5px 0;
+                width: 100%;
+                justify-content: space-around;
+            }
+            .sidebar-nav button {
+                flex-direction: column;
+                padding: 6px 8px;
+                font-size: 0.7em;
+                border-left: none;
+                border-bottom: 2px solid transparent;
+                min-width: 60px;
+                text-align: center;
+                gap: 4px;
+            }
+            .sidebar-nav button.active {
+                border-bottom-color: var(--accent);
+                background: transparent;
+            }
+            .sidebar-nav button .nav-icon { font-size:1.4em; width:auto; }
+            .main-content {
+                padding-bottom: 70px; /* space for bottom nav */
+                max-height: none;
+            }
+            .top-bar { padding:12px 16px; }
+            .content-area { padding:16px; }
+            .card { padding:16px; }
+        }
+        /* Form */
+        label {
+            display:block;
+            font-size:0.75em;
+            font-weight:600;
+            color:var(--text2);
+            margin-bottom:4px;
+            text-transform:uppercase;
+            letter-spacing:0.3px;
+        }
+        input, select {
+            width:100%;
+            padding:12px 12px;
+            background:var(--input-bg);
+            border:1px solid var(--border);
+            border-radius:6px;
+            color:#fff;
+            font-size:16px; /* prevent zoom on iOS */
+            font-family:inherit;
+        }
+        select {
+            appearance:none;
+            background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a0b4c8' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat:no-repeat;
+            background-position:right 12px center;
+            padding-right:36px;
+        }
+        .input-group { margin-bottom:12px; }
+        .btn {
+            padding:12px 20px;
+            border:none;
+            border-radius:8px;
+            cursor:pointer;
+            font-weight:600;
+            font-size:16px;
+            font-family:inherit;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            gap:6px;
+            min-height:44px; /* touch target */
+        }
+        .btn-accent { background:var(--accent); color:#1a1a1a; }
+        .btn-outline { background:transparent; border:1px solid var(--border); color:var(--text); }
+        .btn-group { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+        table { width:100%; border-collapse:collapse; font-size:0.82em; margin-top:10px; }
+        table th { background:#1a2b3d; color:var(--text2); padding:10px 12px; text-align:left; font-weight:600; font-size:0.75em; text-transform:uppercase; border-bottom:2px solid var(--border); }
+        table td { padding:10px 12px; border-bottom:1px solid var(--border); }
+        .highlight-val { font-weight:700; color:var(--accent); font-size:1.1em; }
+        .stat-card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px; text-align:center; box-shadow:0 4px 24px rgba(0,0,0,0.4); }
+        .stat-card .stat-val { font-size:1.6em; font-weight:700; color:var(--accent); }
+        .stat-card .stat-label { font-size:0.7em; color:var(--text2); text-transform:uppercase; letter-spacing:0.8px; margin-top:2px; }
+        .alert { padding:12px 16px; border-radius:8px; font-size:0.85em; margin-top:10px; display:flex; align-items:center; gap:8px; }
+        .alert-warn { background:#2d2410; border:1px solid #5a4518; color:var(--warning); }
+        .alert-danger { background:#2d1010; border:1px solid #5a1818; color:var(--danger); }
+        .alert-success { background:#102d1a; border:1px solid #185a2e; color:var(--success); }
+        @media print {
+            .sidebar, .top-bar, .btn-group, .btn, .alert { display:none!important; }
+            .main-content { max-height:none; overflow:visible; }
+            body { background:#fff; color:#000; }
+            .card { box-shadow:none; border:1px solid #ccc; }
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">🏗️ ACI 211</div>
+            <div class="subtitle">Mix Design Calculator</div>
+        </div>
+        <nav class="sidebar-nav">
+            <button data-sheet="dashboard" class="active"><span class="nav-icon">📊</span><span class="nav-text">Dashboard</span></button>
+            <button data-sheet="materialProps"><span class="nav-icon">🧪</span><span class="nav-text">Materials</span></button>
+            <button data-sheet="aciTables"><span class="nav-icon">📋</span><span class="nav-text">ACI Tables</span></button>
+            <button data-sheet="mixDesign"><span class="nav-icon">⚙️</span><span class="nav-text">Mix Design</span></button>
+            <button data-sheet="quantityTakeoff"><span class="nav-icon">📐</span><span class="nav-text">Takeoff</span></button>
+            <button onclick="printPDF()" style="margin-top:8px;"><span class="nav-icon">🖨️</span><span class="nav-text">Print</span></button>
+            <button onclick="exportExcel()"><span class="nav-icon">📥</span><span class="nav-text">Export</span></button>
+            <button onclick="runFullCalculation()"><span class="nav-icon">🔄</span><span class="nav-text">Calculate</span></button>
+        </nav>
+        <div class="sidebar-footer">ACI 211.1-91 | Absolute Volume Method</div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main-content">
+        <div class="top-bar">
+            <h1 id="currentSheetTitle">📊 Dashboard</h1>
+            <span class="badge" id="complianceBadge">⚪ Ready</span>
+        </div>
+        <div class="content-area">
+            <!-- Dashboard Sheet -->
+            <div class="sheet-panel active" id="sheet-dashboard">
+                <div class="grid-4" id="dashStats">
+                    <div class="stat-card"><div class="stat-val" id="dashGrade">--</div><div class="stat-label">Grade</div></div>
+                    <div class="stat-card"><div class="stat-val" id="dashFcr">--</div><div class="stat-label">f'cr (MPa)</div></div>
+                    <div class="stat-card"><div class="stat-val" id="dashWC">--</div><div class="stat-label">W/C</div></div>
+                    <div class="stat-card"><div class="stat-val" id="dashCement">--</div><div class="stat-label">Cement (kg/m³)</div></div>
+                </div>
+                <div class="card"><h3><span class="dot"></span> Mix Summary</h3><div id="dashMixSummary"></div></div>
+                <div class="card"><h3><span class="dot"></span> Materials per m³</h3><table id="dashMaterialTable"><tbody><tr><td colspan="4">Run calculation first.</td></tr></tbody></table></div>
+                <div id="dashAlerts"></div>
+            </div>
+
+            <!-- Material Properties Sheet -->
+            <div class="sheet-panel" id="sheet-materialProps">
+                <div class="card"><h3><span class="dot"></span> General</h3>
+                    <div class="grid-3">
+                        <div class="input-group"><label>Project</label><input id="projectName" value="Sample Project"></div>
+                        <div class="input-group"><label>Mix ID</label><input id="mixDesignID" value="MIX-2026-001"></div>
+                        <div class="input-group"><label>Grade</label><select id="concreteGrade"><option>M10</option><option>M15</option><option>M20</option><option>M25</option><option>M30</option><option>M35</option><option>M40</option></select></div>
+                    </div>
+                    <div class="grid-3">
+                        <div class="input-group"><label>Age (days)</label><select id="designAge"><option value="7">7</option><option value="14">14</option><option value="28">28</option><option value="56">56</option></select></div>
+                        <div class="input-group"><label>f'c (MPa)</label><input type="number" id="fcRequired" value="20" step="0.1"></div>
+                        <div class="input-group"><label>Std Dev (MPa)</label><input type="number" id="stdDev" value="4.0" step="0.1"></div>
+                    </div>
+                </div>
+                <div class="card"><h3><span class="dot"></span> Workability</h3>
+                    <div class="grid-3">
+                        <div class="input-group"><label>Slump (mm)</label><input type="number" id="slump" value="75" min="10" max="200"></div>
+                        <div class="input-group"><label>Placement</label><select id="placementType"><option>Slab</option><option>Footing</option><option>Beam</option><option>Column</option><option>Pavement</option></select></div>
+                        <div class="input-group"><label>Max Agg (mm)</label><select id="maxAggSize"><option value="10">10</option><option value="19">19</option><option value="25">25</option><option value="37.5">37.5</option></select></div>
+                    </div>
+                    <div class="grid-2">
+                        <div class="input-group"><label>Cement Type</label><select id="cementType"><option>OPC</option><option>PPC</option><option>Type I</option><option>Type II</option><option>Type III</option></select></div>
+                        <div class="input-group"><label>Air</label><select id="airEntrained"><option value="non-air">Non-Air</option><option value="air">Air Entrained</option></select></div>
+                    </div>
+                </div>
+                <div class="card"><h3><span class="dot"></span> Material Properties</h3>
+                    <div class="grid-3">
+                        <div class="input-group"><label>Cement SG</label><input type="number" id="cementSG" value="3.15" step="0.01"></div>
+                        <div class="input-group"><label>Fine Agg SG</label><input type="number" id="fineAggSG" value="2.65" step="0.01"></div>
+                        <div class="input-group"><label>Coarse Agg SG</label><input type="number" id="coarseAggSG" value="2.70" step="0.01"></div>
+                    </div>
+                    <div class="grid-3">
+                        <div class="input-group"><label>Fineness Modulus</label><input type="number" id="finenessModulus" value="2.80" step="0.01"></div>
+                        <div class="input-group"><label>Dry Rodded UW (kg/m³)</label><input type="number" id="dryRoddedUW" value="1600"></div>
+                        <div class="input-group"><label>Air Content (%)</label><input type="number" id="airContentPct" value="1.0" step="0.1"></div>
+                    </div>
+                    <div class="grid-3">
+                        <div class="input-group"><label>Fine Moisture %</label><input type="number" id="fineMoisture" value="2.0" step="0.1"></div>
+                        <div class="input-group"><label>Fine Absorption %</label><input type="number" id="fineAbsorption" value="1.5" step="0.1"></div>
+                        <div class="input-group"><label>Coarse Moisture %</label><input type="number" id="coarseMoisture" value="1.0" step="0.1"></div>
+                    </div>
+                    <div class="grid-2">
+                        <div class="input-group"><label>Coarse Absorption %</label><input type="number" id="coarseAbsorption" value="0.8" step="0.1"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ACI Tables Sheet -->
+            <div class="sheet-panel" id="sheet-aciTables">
+                <div class="card"><h3>Water (Non‑Air) kg/m³</h3><table id="tblWaterNonAir"></table></div>
+                <div class="card"><h3>Water (Air) kg/m³</h3><table id="tblWaterAir"></table></div>
+                <div class="card"><h3>Coarse Aggregate Volume Fraction</h3><table id="tblCAVolume"></table></div>
+                <div class="card"><h3>W/C vs Strength (28‑day OPC)</h3><table id="tblWCStrength"></table></div>
+            </div>
+
+            <!-- Mix Design Sheet -->
+            <div class="sheet-panel" id="sheet-mixDesign">
+                <div class="card" id="step1Card"><h3>Step 1: Required Average Strength</h3><div id="step1Result"></div></div>
+                <div class="card" id="step2Card"><h3>Step 2: W/C Ratio</h3><div id="step2Result"></div></div>
+                <div class="card" id="step3Card"><h3>Step 3: Water Content</h3><div id="step3Result"></div></div>
+                <div class="card" id="step4Card"><h3>Step 4: Cement Content</h3><div id="step4Result"></div></div>
+                <div class="card" id="step5Card"><h3>Step 5: Absolute Volumes</h3><div id="step5Result"></div></div>
+                <div class="card" id="step6Card"><h3>Step 6: Coarse Aggregate</h3><div id="step6Result"></div></div>
+                <div class="card" id="step7Card"><h3>Step 7: Fine Aggregate</h3><div id="step7Result"></div></div>
+                <div class="card" id="step8Card"><h3>Step 8: Moisture Correction</h3><div id="step8Result"></div></div>
+                <div id="mixAlerts"></div>
+                <div class="btn-group">
+                    <button class="btn btn-accent" onclick="runFullCalculation()">🔄 Run Mix Design</button>
+                </div>
+            </div>
+
+            <!-- Quantity Takeoff Sheet -->
+            <div class="sheet-panel" id="sheet-quantityTakeoff">
+                <div class="card">
+                    <h3>Quantity Calculator</h3>
+                    <div class="grid-2">
+                        <div class="input-group"><label>Element Type</label><select id="qtyElementType" onchange="updateQtyForm()"><option value="slab">Slab</option><option value="beam">Beam</option><option value="column">Column</option><option value="footing">Footing</option><option value="circularColumn">Circular Column</option></select></div>
+                    </div>
+                    <div id="qtyFormFields" class="grid-3" style="margin-top:12px;"></div>
+                    <button class="btn btn-accent" onclick="calculateQuantityTakeoff()" style="margin-top:12px;">📐 Calculate</button>
+                    <div id="qtyResult" style="margin-top:16px;"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+// ==================== ACI DATA ====================
+const waterNonAir = {10:[207,228,243],19:[190,205,216],25:[179,193,202],37.5:[166,181,190]};
+const waterAir = {10:[181,202,216],19:[168,184,197],25:[158,174,185],37.5:[147,163,174]};
+const caVolumeTable = {
+    2.40:{10:0.50,19:0.59,25:0.66,37.5:0.71},
+    2.60:{10:0.48,19:0.57,25:0.64,37.5:0.69},
+    2.80:{10:0.46,19:0.55,25:0.62,37.5:0.67},
+    3.00:{10:0.44,19:0.53,25:0.60,37.5:0.65},
+    3.20:{10:0.42,19:0.51,25:0.58,37.5:0.63},
+    3.40:{10:0.40,19:0.49,25:0.56,37.5:0.61}
+};
+const wcStrengthData = [
+    {wc:0.35,strength:45},{wc:0.40,strength:42},{wc:0.45,strength:38},
+    {wc:0.50,strength:34},{wc:0.55,strength:30},{wc:0.60,strength:26},
+    {wc:0.65,strength:22},{wc:0.70,strength:18},{wc:0.75,strength:14},{wc:0.80,strength:10}
+];
+const minCement=300, maxWC=0.55;
+
+function getVal(id){return parseFloat(document.getElementById(id).value)||0;}
+function getStr(id){return document.getElementById(id).value;}
+
+function getWaterContent(slump,aggSize,isAir){
+    const t=isAir?waterAir:waterNonAir;
+    const v=t[parseFloat(aggSize)]||t[19];
+    if(slump<=50)return v[0];
+    if(slump<=100)return v[1];
+    return v[2];
+}
+
+function getCAVolumeFraction(fm,aggSize){
+    const keys=[2.40,2.60,2.80,3.00,3.20,3.40];
+    let f=keys[0], minDiff=10;
+    keys.forEach(k=>{let d=Math.abs(fm-k); if(d<minDiff){minDiff=d; f=k;}});
+    if(fm<=2.40) return caVolumeTable[2.40][aggSize];
+    if(fm>=3.40) return caVolumeTable[3.40][aggSize];
+    let idx=keys.indexOf(f);
+    let low=keys[Math.max(0,idx-1)], high=keys[Math.min(keys.length-1,idx+1)];
+    let fLow=caVolumeTable[low][aggSize], fHigh=caVolumeTable[high][aggSize];
+    let t=(fm-low)/(high-low);
+    return fLow+t*(fHigh-fLow);
+}
+
+function getWCFromStrength(fcr){
+    for(let i=0;i<wcStrengthData.length-1;i++){
+        if(fcr>=wcStrengthData[i+1].strength && fcr<=wcStrengthData[i].strength){
+            let t=(fcr-wcStrengthData[i+1].strength)/(wcStrengthData[i].strength-wcStrengthData[i+1].strength);
+            return +(wcStrengthData[i+1].wc + t*(wcStrengthData[i].wc - wcStrengthData[i+1].wc)).toFixed(3);
+        }
+    }
+    return fcr>45?0.35:0.80;
+}
+
+// ==================== CALCULATION ENGINE ====================
+let calcResults={};
+function runFullCalculation(){
+    const fc=getVal('fcRequired'), stdDev=getVal('stdDev'), slump=getVal('slump');
+    const aggSize=getStr('maxAggSize'), isAir=getStr('airEntrained')==='air';
+    const cementSG=getVal('cementSG'), fineSG=getVal('fineAggSG'), coarseSG=getVal('coarseAggSG');
+    const fm=getVal('finenessModulus'), dryRoddedUW=getVal('dryRoddedUW');
+    const airPct=getVal('airContentPct'), fineMoist=getVal('fineMoisture'), fineAbs=getVal('fineAbsorption');
+    const coarseMoist=getVal('coarseMoisture'), coarseAbs=getVal('coarseAbsorption');
+    
+    const fcr1=fc+1.34*stdDev, fcr2=fc+2.33*stdDev-3.45;
+    let fcr=Math.max(fcr1,fcr2,fc<21?fc+7.0:fc+8.5);
+    fcr=+fcr.toFixed(1);
+    
+    let wcStr=getWCFromStrength(fcr);
+    let selWC=Math.min(wcStr,maxWC);
+    const water=getWaterContent(slump,aggSize,isAir);
+    let cement=Math.round(water/selWC);
+    if(cement<minCement) cement=minCement;
+    
+    const volCement=cement/(cementSG*1000), volWater=water/1000, volAir=airPct/100;
+    let volRemaining=1-volCement-volWater-volAir;
+    
+    const caVolFrac=getCAVolumeFraction(fm,aggSize);
+    const coarseWt=caVolFrac*dryRoddedUW;
+    const volCoarse=coarseWt/(coarseSG*1000);
+    let volFine=volRemaining-volCoarse;
+    let fineWt=volFine*fineSG*1000;
+    if(fineWt<0) fineWt=0;
+    fineWt=Math.round(fineWt);
+    
+    // Moisture correction
+    const waterAdjFine=fineWt*(fineAbs-fineMoist)/100;
+    const waterAdjCoarse=coarseWt*(coarseAbs-coarseMoist)/100;
+    const correctedWater=water+waterAdjFine+waterAdjCoarse;
+    const correctedFine=fineWt*(1+fineMoist/100);
+    const correctedCoarse=coarseWt*(1+coarseMoist/100);
+    
+    const yieldVol=volCement+correctedWater/1000+volAir+(correctedFine/(fineSG*1000))+(correctedCoarse/(coarseSG*1000));
+    
+    calcResults={
+        fc,stdDev,fcr,selWC,wcStr,water,cement,cementBags:Math.ceil(cement/50),
+        volCement,volWater,volAir,volRemaining,caVolFrac,coarseWt:Math.round(coarseWt),
+        volCoarse,volFine,fineWt,correctedWater,correctedFine:Math.round(correctedFine),
+        correctedCoarse:Math.round(correctedCoarse),yieldRatio:+yieldVol.toFixed(4),
+        grade:getStr('concreteGrade'),slump,aggSize,isAir,cementSG,fineSG,coarseSG,
+        fm,dryRoddedUW,airPct,alerts:[]
+    };
+    
+    let alerts=[];
+    if(selWC<wcStr) alerts.push({type:'warn',msg:`W/C limited to ${selWC.toFixed(3)} (max ${maxWC})`});
+    if(selWC>0.55) alerts.push({type:'warn',msg:`W/C >0.55 – durability risk`});
+    if(cement<minCement) alerts.push({type:'danger',msg:`Cement below minimum ${minCement} kg/m³`});
+    calcResults.alerts=alerts;
+    
+    updateMixDisplay();
+    updateDashboard();
+    updateComplianceBadge();
+}
+
+function updateMixDisplay(){
+    let r=calcResults;
+    if(!r.fcr) return;
+    document.getElementById('step1Result').innerHTML=`<table><tr><td>f'c</td><td>${r.fc} MPa</td></tr><tr><td>Std Dev</td><td>${r.stdDev} MPa</td></tr><tr><td><b>f'cr</b></td><td class="highlight-val">${r.fcr} MPa</td></tr></table>`;
+    document.getElementById('step2Result').innerHTML=`<table><tr><td>Strength W/C</td><td>${r.wcStr.toFixed(3)}</td></tr><tr><td>Max W/C</td><td>${maxWC.toFixed(2)}</td></tr><tr><td><b>Selected W/C</b></td><td class="highlight-val">${r.selWC.toFixed(3)}</td></tr></table>`;
+    document.getElementById('step3Result').innerHTML=`<p>Water = <b>${r.water} kg/m³</b> (${r.isAir?'Air':'Non-Air'}, slump ${r.slump}mm, agg ${r.aggSize}mm)</p>`;
+    document.getElementById('step4Result').innerHTML=`<p>Cement = <b>${r.cement} kg/m³</b> (${r.cementBags} bags @ 50 kg)</p>`;
+    document.getElementById('step5Result').innerHTML=`<table><tr><th>Material</th><th>Volume (m³)</th></tr><tr><td>Cement</td><td>${r.volCement.toFixed(6)}</td></tr><tr><td>Water</td><td>${r.volWater.toFixed(6)}</td></tr><tr><td>Air</td><td>${r.volAir.toFixed(6)}</td></tr><tr><td>Remaining</td><td>${r.volRemaining.toFixed(6)}</td></tr></table>`;
+    document.getElementById('step6Result').innerHTML=`<p>Volume fraction = ${r.caVolFrac.toFixed(3)} → Coarse Agg = <b>${r.coarseWt} kg/m³</b></p>`;
+    document.getElementById('step7Result').innerHTML=`<p>Fine Agg = <b>${r.fineWt} kg/m³</b></p>`;
+    document.getElementById('step8Result').innerHTML=`<table><tr><td>Water</td><td>${r.correctedWater.toFixed(1)} kg</td></tr><tr><td>Fine Agg</td><td>${r.correctedFine} kg</td></tr><tr><td>Coarse Agg</td><td>${r.correctedCoarse} kg</td></tr></table><p>Yield ratio = ${r.yieldRatio}</p>`;
+    let alertsHtml='';
+    r.alerts.forEach(a=>alertsHtml+=`<div class="alert alert-${a.type}">${a.type==='danger'?'⛔':'⚠️'} ${a.msg}</div>`);
+    if(Math.abs(r.yieldRatio-1)>0.02) alertsHtml+=`<div class="alert alert-warn">⚠️ Yield deviation >2%</div>`;
+    if(!alertsHtml) alertsHtml=`<div class="alert alert-success">✅ ACI compliant</div>`;
+    document.getElementById('mixAlerts').innerHTML=alertsHtml;
+}
+
+function updateDashboard(){
+    let r=calcResults;
+    if(!r.fcr) return;
+    document.getElementById('dashGrade').textContent=r.grade;
+    document.getElementById('dashFcr').textContent=r.fcr+' MPa';
+    document.getElementById('dashWC').textContent=r.selWC.toFixed(3);
+    document.getElementById('dashCement').textContent=r.cement;
+    document.getElementById('dashMixSummary').innerHTML=`<p><b>${r.grade}</b> | f'cr ${r.fcr} MPa | W/C ${r.selWC.toFixed(3)} | Slump ${r.slump}mm | Agg ${r.aggSize}mm</p>`;
+    document.getElementById('dashMaterialTable').innerHTML=`<thead><tr><th>Material</th><th>kg/m³</th><th>Volume m³</th></tr></thead><tbody>
+    <tr><td>Cement</td><td>${r.cement}</td><td>${r.volCement.toFixed(6)}</td></tr>
+    <tr><td>Water</td><td>${r.correctedWater.toFixed(1)}</td><td>${(r.correctedWater/1000).toFixed(6)}</td></tr>
+    <tr><td>Fine Agg</td><td>${r.correctedFine}</td><td>${(r.correctedFine/(r.fineSG*1000)).toFixed(6)}</td></tr>
+    <tr><td>Coarse Agg</td><td>${r.correctedCoarse}</td><td>${(r.correctedCoarse/(r.coarseSG*1000)).toFixed(6)}</td></tr>
+    </tbody>`;
+}
+
+function updateComplianceBadge(){
+    let r=calcResults;
+    let badge=document.getElementById('complianceBadge');
+    if(!r.fcr){badge.textContent='⚪ Ready'; return;}
+    let hasErr=r.alerts.some(a=>a.type==='danger')||Math.abs(r.yieldRatio-1)>0.03;
+    let hasWarn=r.alerts.some(a=>a.type==='warn')||Math.abs(r.yieldRatio-1)>0.02;
+    if(hasErr){badge.innerHTML='⛔ Issue'; badge.style.color='#e05555';}
+    else if(hasWarn){badge.innerHTML='⚠️ Review'; badge.style.color='#e8a840';}
+    else {badge.innerHTML='✅ Compliant'; badge.style.color='#4caf84';}
+}
+
+// ==================== QUANTITY TAKEOFF ====================
+function updateQtyForm(){
+    let type=getStr('qtyElementType');
+    let html='';
+    if(type==='slab') html=`<div class="input-group"><label>Length (m)</label><input id="qtyL" value="5"></div><div class="input-group"><label>Width (m)</label><input id="qtyW" value="4"></div><div class="input-group"><label>Thickness (m)</label><input id="qtyThick" value="0.15"></div>`;
+    else if(type==='beam') html=`<div class="input-group"><label>Length</label><input id="qtyL" value="6"></div><div class="input-group"><label>Width</label><input id="qtyW" value="0.3"></div><div class="input-group"><label>Depth</label><input id="qtyD" value="0.5"></div>`;
+    else if(type==='column') html=`<div class="input-group"><label>Width</label><input id="qtyW" value="0.4"></div><div class="input-group"><label>Length</label><input id="qtyL" value="0.4"></div><div class="input-group"><label>Height</label><input id="qtyH" value="3"></div>`;
+    else if(type==='footing') html=`<div class="input-group"><label>Length</label><input id="qtyL" value="2"></div><div class="input-group"><label>Width</label><input id="qtyW" value="2"></div><div class="input-group"><label>Thickness</label><input id="qtyThick" value="0.5"></div>`;
+    else if(type==='circularColumn') html=`<div class="input-group"><label>Diameter</label><input id="qtyDia" value="0.5"></div><div class="input-group"><label>Height</label><input id="qtyH" value="3"></div><div></div>`;
+    document.getElementById('qtyFormFields').innerHTML=html;
+}
+
+function calculateQuantityTakeoff(){
+    let type=getStr('qtyElementType'), vol=0;
+    if(type==='slab') vol=(getVal('qtyL')||0)*(getVal('qtyW')||0)*(getVal('qtyThick')||0);
+    if(type==='beam') vol=(getVal('qtyL')||0)*(getVal('qtyW')||0)*(getVal('qtyD')||0);
+    if(type==='column') vol=(getVal('qtyW')||0)*(getVal('qtyL')||0)*(getVal('qtyH')||0);
+    if(type==='footing') vol=(getVal('qtyL')||0)*(getVal('qtyW')||0)*(getVal('qtyThick')||0);
+    if(type==='circularColumn'){let d=getVal('qtyDia')||0; vol=Math.PI*(d/2)**2*(getVal('qtyH')||0);}
+    vol=+vol.toFixed(3);
+    let r=calcResults;
+    let html=`<p><b>Volume:</b> ${vol} m³</p>`;
+    if(r.fcr){
+        let cementT=Math.round(r.cement*vol), bags=Math.ceil(cementT/50);
+        html+=`<table><tr><th>Material</th><th>Quantity</th></tr>
+        <tr><td>Cement</td><td>${cementT} kg (${bags} bags)</td></tr>
+        <tr><td>Water</td><td>${Math.round(r.correctedWater*vol)} L</td></tr>
+        <tr><td>Fine Agg</td><td>${Math.round(r.correctedFine*vol)} kg</td></tr>
+        <tr><td>Coarse Agg</td><td>${Math.round(r.correctedCoarse*vol)} kg</td></tr></table>`;
+    }else html+='<p style="color:#e8a840;">Run mix design first for materials.</p>';
+    document.getElementById('qtyResult').innerHTML=html;
+}
+
+// ==================== NAVIGATION ====================
+function switchSheet(name){
+    document.querySelectorAll('.sheet-panel').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.sidebar-nav button[data-sheet]').forEach(b=>b.classList.remove('active'));
+    let panel=document.getElementById('sheet-'+name);
+    if(panel) panel.classList.add('active');
+    let btn=document.querySelector(`.sidebar-nav button[data-sheet="${name}"]`);
+    if(btn) btn.classList.add('active');
+    document.getElementById('currentSheetTitle').textContent={
+        dashboard:'📊 Dashboard',materialProps:'🧪 Materials',aciTables:'📋 ACI Tables',
+        mixDesign:'⚙️ Mix Design',quantityTakeoff:'📐 Takeoff'
+    }[name]||name;
+}
+
+document.querySelector('.sidebar-nav').addEventListener('click',function(e){
+    let btn=e.target.closest('button[data-sheet]');
+    if(btn) switchSheet(btn.dataset.sheet);
+});
+
+// ==================== TABLES INIT ====================
+(function popTables(){
+    let h='<thead><tr><th>Agg</th><th>25-50</th><th>75-100</th><th>150-175</th></tr></thead><tbody>';
+    for(let[s,v]of Object.entries(waterNonAir)) h+=`<tr><td>${s}mm</td><td>${v[0]}</td><td>${v[1]}</td><td>${v[2]}</td></tr>`;
+    document.getElementById('tblWaterNonAir').innerHTML=h+'</tbody>';
+    h='<thead><tr><th>Agg</th><th>25-50</th><th>75-100</th><th>150-175</th></tr></thead><tbody>';
+    for(let[s,v]of Object.entries(waterAir)) h+=`<tr><td>${s}mm</td><td>${v[0]}</td><td>${v[1]}</td><td>${v[2]}</td></tr>`;
+    document.getElementById('tblWaterAir').innerHTML=h+'</tbody>';
+    h='<thead><tr><th>FM</th><th>10mm</th><th>19mm</th><th>25mm</th><th>37.5mm</th></tr></thead><tbody>';
+    for(let[fm,sz]of Object.entries(caVolumeTable)) h+=`<tr><td>${fm}</td><td>${sz[10]}</td><td>${sz[19]}</td><td>${sz[25]}</td><td>${sz[37.5]}</td></tr>`;
+    document.getElementById('tblCAVolume').innerHTML=h+'</tbody>';
+    h='<thead><tr><th>W/C</th><th>Strength (MPa)</th></tr></thead><tbody>';
+    wcStrengthData.forEach(r=>h+=`<tr><td>${r.wc}</td><td>${r.strength}</td></tr>`);
+    document.getElementById('tblWCStrength').innerHTML=h+'</tbody>';
+})();
+
+// ==================== EXPORT ====================
+function printPDF(){ window.print(); }
+function exportExcel(){
+    let csv="ACI 211 Mix Design\r\n";
+    let r=calcResults;
+    if(r.fcr){
+        csv+=`Grade,${r.grade}\r\nf'cr,${r.fcr} MPa\r\nW/C,${r.selWC}\r\nCement,${r.cement} kg/m³\r\n`;
+        csv+=`Water,${r.correctedWater.toFixed(1)}\r\nFine Agg,${r.correctedFine}\r\nCoarse Agg,${r.correctedCoarse}\r\n`;
+    }
+    let blob=new Blob([csv],{type:'text/csv'});
+    let a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='mix_design.csv'; a.click();
+}
+
+// ==================== SERVICE WORKER ====================
+if('serviceWorker' in navigator){
+    window.addEventListener('load',()=>{
+        navigator.serviceWorker.register('sw.js').then(reg=>console.log('SW registered')).catch(err=>console.log('SW failed',err));
+    });
+}
+
+// Auto-init
+window.onload=function(){
+    updateQtyForm();
+    document.getElementById('concreteGrade').addEventListener('change',function(){
+        let map={M10:10,M15:15,M20:20,M25:25,M30:30,M35:35,M40:40};
+        document.getElementById('fcRequired').value=map[this.value]||20;
+    });
+    runFullCalculation();
+    switchSheet('dashboard');
+};
+</script>
+</body>
+</html>
